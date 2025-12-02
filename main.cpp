@@ -8,12 +8,20 @@ a switch and potentiometer.
 
 
 #include <avr/io.h>
+#include <stdlib.h>
 #include <avr/interrupt.h>
 #include "timer1.h"
 #include "switch.h"
 #include "pwm.h"
+#include "i2c.h"
+#include "spi.h"
 
+#define THRESHOLD 16384
 
+typedef enum tilt_states {
+    NORMAL, TILTED
+} tilt_stateType;
+tilt_stateType tiltState = NORMAL;
 
 typedef enum button_states {
   wait_press, debounce_press, wait_release, debounce_release
@@ -27,33 +35,41 @@ volatile int delay_ms;
 
 
 int main() {
+    initPWM_Pins();
+    SPI_Init();
+    initI2C();
+    initSwitchPD0();
+    timer1_init();
+     MAX7219_Init();
     sei(); // Enable global interrupts
     //initial
-    int smile[] =   {0b00111100,
-                     0b01000010,
-                     0b10100101,
-                     0b10000001,
-                     0b10100101,
-                     0b10011001,
-                     0b01000010,
-                     0b00111100};
-
-    int frown[] =   {0b00111100,
-                     0b01000010,
-                     0b10100101,
-                     0b10000001,
-                     0b10011001,
-                     0b10100101,
-                     0b01000010,
-                     0b00111100};
     
-    float buzz = 0;
+    
+   
 
     while(1){
+    int16_t accelX = readAccelAxis(0x3B);
+    int16_t accelY = readAccelAxis(0x3D);
+    int16_t accelZ = readAccelAxis(0x3F);
+
+   
+    if (abs(accelY) > THRESHOLD || abs(accelZ) > THRESHOLD) {
+        tiltState = TILTED;
+    } else {
+        tiltState = NORMAL;
+    }
+
+   
+    if (tiltState == TILTED) {
+        frownyFace(); 
+       changePiezoFrequency(2000);
+    } else {
+        smileyFace(); // smiley face
         
+    }
         switch(state) {
             case wait_press:
-            changeDutyCycle(buzz); 
+            
 
                 break;
             case debounce_press:
@@ -65,7 +81,7 @@ int main() {
                 
                 break;
             case debounce_release:
-                changeDutyCycle(2.5); //turns off motor -chris
+                
                 ms_delay(1);
             state = wait_press;
 
@@ -80,6 +96,7 @@ ISR(INT0_vect){
         state = debounce_press; // Transition to debounce_press state
     }
     else if(state == wait_release){
+        changePiezoFrequency(0);
         state = debounce_release; // Transition to debounce_release state
     }
 }
