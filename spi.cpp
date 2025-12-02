@@ -1,4 +1,4 @@
-// spi.cpp
+
 #include "spi.h"
 #include <avr/io.h>
 #include <util/delay.h>
@@ -58,3 +58,4 @@ void MAX7219_DisplayBuffer(const int buffer[8])
         SPI_SendCommand(row + 1, buffer[row]);
     }
 }
+
