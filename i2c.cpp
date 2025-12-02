@@ -3,7 +3,7 @@
 #include <avr/io.h>
 #include "i2c.h"
 
-
+#define MPU_ADDR 0x68
 
 void initI2C() 
 {
@@ -115,6 +115,15 @@ unsigned char Read_data()
 {
     // Return received data register
     return TWDR;
+}
+int16_t readAccelAxis(unsigned char addr) {
+    // Read high and low register
+    Read_from(MPU_ADDR, addr);          // high byte
+    uint8_t high = Read_data();
+    Read_from(MPU_ADDR, addr + 1);      // low byte
+    uint8_t low = Read_data();
+
+    return (int16_t)((high << 8) | low);  // combine into 16-bit signed
 }
 
 

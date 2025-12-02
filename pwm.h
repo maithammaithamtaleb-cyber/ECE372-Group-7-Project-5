@@ -2,6 +2,6 @@
 #define PWM_H
 
 void initPWM_Pins();
-void changeDutyCycle(float voltageSignal);
+void changePiezoFrequency(unsigned int frequency);
 
 #endif

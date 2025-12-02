@@ -23,7 +23,8 @@
 void SPI_Init();
 void SPI_SendByte(int data);
 void SPI_SendCommand(int reg,int value);
-
+void smileyFace();
+void frownyFace();
 // LED matrix helpers
 void MAX7219_Init();
 void MAX7219_DisplayBuffer(const int buffer[8]);

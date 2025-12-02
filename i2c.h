@@ -8,6 +8,6 @@ void StopI2C_Trans();
 void Write(unsigned char data);
 void Read_from(unsigned char SLA, unsigned char MEMADDRESS);
 unsigned char Read_data();
-
+int16_t readAccelAxis(unsigned char addr);
 
 #endif
