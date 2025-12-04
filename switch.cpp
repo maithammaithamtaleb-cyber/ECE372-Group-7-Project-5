@@ -9,12 +9,12 @@
  * Initializes pull-up resistor on PD0 and sets it into input mode
  */
 void initSwitchPD0(){
-    DDRD &= ~(1<<DDD0); // I/P
-    PORTD |= (1<<PORTD0); //Pull Up Resistor
+    DDRD &= ~(1<<DDD2); // I/P
+    PORTD |= (1<<PORTD2); //Pull Up Resistor
 
-    EICRA &= ~(1<<ISC01);
-    EICRA |= (1<<ISC00);
+    EICRA &= ~(1<<ISC21);
+    EICRA |= (1<<ISC20);
 
-    EIFR = (1<<INTF0);
-    EIMSK |= (1<<INT0);
+    EIFR = (1<<INTF2);
+    EIMSK |= (1<<INT2);
 }
